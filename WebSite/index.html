@@ -4,23 +4,24 @@
     <meta charset="UTF-8">
     <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="Images/Logo.png"">
     <title>Success Motors</title>
     <link rel="stylesheet" type="text/css" href="CSS/style.css">
     <script src="https://www.google.com/recaptcha/api.js"></script>
     <script>
      function timestamp() { var response = document.getElementById("g-recaptcha-response"); if (response == null || response.value.trim() == "") {var elems = JSON.parse(document.getElementsByName("captcha_settings")[0].value);elems["ts"] = JSON.stringify(new Date().getTime());document.getElementsByName("captcha_settings")[0].value = JSON.stringify(elems); } } setInterval(timestamp, 500); 
     </script>
+    <script src = "JS/indexJS.js"></script>
 </head>
 <body>
-    
     <nav class="header">
-        <a class="logo">
+        <a class="logo" a href="index.html">
             <img src="Images/Logo.png" alt="Success Motors logo">
             <p id="Logo">Success Motors</p>
         </a>
         <ul class = "nav-links">
             <li class="nav-item"><a href="index.html">About us</a></li>
-            <li class="nav-item"><a href="index.html">Submit form</a></li>
+            <li class="nav-item"><a onclick="showForm()">Submit form</a></li>
         </ul>
     </nav>
     <div class="info-block">
@@ -33,39 +34,60 @@
             <p>Success Motors is your helper to find everything you want for your car or the car itself.
                 Try it now by sending us a form
             </p>
-            <input class="formButton" type="button" value="Submit form">
+            <input class="button" type="button" value="Submit form" onclick = "showForm()">
         </div>
     </div>
-    <div class="form">
-
-
-   
-    
-    <!--  ----------------------------------------------------------------------  -->
-    <!--  NOTE: Please add the following <FORM> element to your page.             -->
-    <!--  ----------------------------------------------------------------------  -->
-    
-    <form action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8" method="POST">
-    
+    <div class="form-block">
+    <form class="form"action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8" method="POST">
+        <label>ORDER FORM</label>
         <input type=hidden name='captcha_settings' value='{"keyname":"SMotorsKeyPair","fallback":"true","orgId":"00D2w00000RIngn","ts":""}'>
         <input type=hidden name="oid" value="00D2w00000RIngn">
         <input type=hidden name="retURL" value="https://success-motors-web.web.app/">
-
-        <label for="company">Company</label><input  id="company" maxlength="40" name="company" size="20" type="text" /><br>
-        
-        <label for="first_name">First Name</label><input  id="first_name" maxlength="40" name="first_name" size="20" type="text" /><br>
-        
-        <label for="last_name">Last Name</label><input  id="last_name" maxlength="80" name="last_name" size="20" type="text" /><br>
-        
-        <label for="email">Email</label><input  id="email" maxlength="80" name="email" size="20" type="text" /><br>
-        
-        <label for="phone">Phone</label><input  id="phone" maxlength="40" name="phone" size="20" type="text" /><br>
-        
-        Product:<input  id="00N2w00000UcJQu" maxlength="20" name="00N2w00000UcJQu" size="20" type="text" /><br>
-        
-        <div class="g-recaptcha" data-sitekey="6Le3es4kAAAAAMxY9Vpl9QZv-IBA9Sdu1IH4lwGe"></div><br>
-        <input type="submit" name="submit">
-        
+        <div class="form-inputs">
+        <input class= "formInput" placeholder="Company" id="company" maxlength="40" name="company" size="20" type="text" />
+        <div class="doubleBlock">
+            <input class= "formInput" placeholder="FirstName" id="first_name" maxlength="40" name="first_name" size="20" type="text" />
+            <input class= "formInput" placeholder="LastName" id="last_name" maxlength="80" name="last_name" size="20" type="text" />
+        </div>
+        <input class= "formInput" placeholder="Email" id="email" maxlength="80" name="email" size="20" type="email" />
+        <input class= "formInput" placeholder="Phone" id="phone" maxlength="40" name="phone" size="20" type="tel" />
+        <select class="formInput" id="00N2w00000UcJQu" name="00N2w00000UcJQu">
+            <option value="HK007A1" selected>Carpets Hyundai</option>
+            <option value="HK008A2">Carpets Kia</option>
+            <option value="L005A1">Carpets Lada</option>
+            <option value="R008A1">Carpets Renault</option>
+            <option value="VAG010A2">Carpets Skoda</option>
+            <option value="VAG009A1">Carpets Volkswagen</option>
+            <option value="VAG007E4">CFNA</option>
+            <option value="VAG008E5">CFNB</option>
+            <option value="VAG005E2">CFW</option>
+            <option value="VAG006E3">CWVA</option>
+            <option value="VAG004E1">CZCA</option>
+            <option value="HK006E2">C4FG</option>
+            <option value="HK005E1">G4LC</option>
+            <option value="HK003C3">Hyundai Accent</option>
+            <option value="HK004C4">Hyundai Solaris</option>
+            <option value="R007E3">H4M</option>
+            <option value="HK001C1">Kia Rio</option>
+            <option value="HK002C2">Kia Rio X-line</option>
+            <option value="R006E2">K4M</option>
+            <option value="R005E1">K7M</option>
+            <option value="L001C1">Lada Vesta</option>
+            <option value="L002C2">Lada Xray</option>
+            <option value="MI001A1">Phone holder Xiaomi</option>
+            <option value="R001C1">Reanult Logan</option>
+            <option value="R002C2">Reanult Logan Stepway</option>
+            <option value="R003C3">Renault Sandero</option>
+            <option value="R004C4">Renault Sandero Stepway</option>
+            <option value="VAG003C3">Skoda Rapid</option>
+            <option value="L004E2">VAZ-21129</option>
+            <option value="L003E1">VAZ-21179</option>
+            <option value="VAG001C1">Volkswagen Polo Sedan</option>
+            <option value="VAG002C2">Volkswagen Polo 2021</option>
+        </select>
+        </div>
+        <div class="g-recaptcha" data-callback="recaptchaCallback" data-sitekey="6Le3es4kAAAAAMxY9Vpl9QZv-IBA9Sdu1IH4lwGe"></div>
+        <input id='submitButton'  class="formButton" type="submit" name="submit">
     </form>
     
     </div>
