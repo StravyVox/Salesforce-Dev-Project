@@ -18,8 +18,8 @@
 .logo p{
     font-family: 'Tilt Warp', cursive;
     font-size: 1.4em;
-    margin-left: 1vb;
-    width: 70vb;
+    padding-left: 1vb;
+    width: 100%;
 }
 .header{
     font-family: 'Merriweather Sans', sans-serif;
@@ -28,6 +28,9 @@
     color: white;
     justify-content: space-between;
     height: 5vh;
+}
+.header a{
+    color: white;
 }
 .header a:visited{
     color: white;
@@ -40,7 +43,7 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
-    width: 10%;
+    width: 15%;
     margin-right: 5%;
 }
 .nav-item{
@@ -55,26 +58,32 @@
 .image-block{
     display: flex;
     justify-content: center;
+    width: 50%;
 }
 .image-block img{
     height: 100%;
     width: 90%;
 }
 .text-block{
+    width: 50%;
     display: flex;
     flex-direction: column;
     align-items: center;
     font-family: 'Merriweather Sans', sans-serif;
-    font-size: 2em;
+    font-size: 2.5vh;
     text-align: justify;
-    padding-right: 5em;
+    padding: 0vh 5vh;
+}
+.text-block p{
+    width: 70%;
+
 }
 .button{
     margin-top: 1em;
     font-family: 'Merriweather Sans', sans-serif;
     font-size: 2vb;
     width: 10em;
-    height: 5em;
+    height: 3em;
     background-color: #FF6700;
     color: white;
     border-radius: 10px;
@@ -102,7 +111,7 @@
 }
 .form{
     display: flex;
-    width: 30%;
+    width: 40%;
     margin-top: 5vh;
     border-radius: 15px;
     background-color: #FF6700;
@@ -128,10 +137,66 @@
 .form-inputs{
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 .doubleBlock{
     display: flex;
     align-items: baseline;
     justify-content: space-around;
+
+}
+.doubleBlock input{
+    width: 50%;
+}
+@media (max-width:481px){
+    .info-block{
+        margin-top: 1em;
+    }
+    .logo {
+        display: flex;
+        padding-left: 1vb;
+        align-items: center;
+        justify-content: space-between;
+        text-decoration: none;
+    }
+    .nav-links{
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        width: 100%;
+        margin-right: 5%;
+    }
+
+    .logo p{
+        font-family: 'Tilt Warp', cursive;
+        font-size: 0.8em;
+        width: 100%;
+    }
+    .image-block{
+        display: none;
+    }
+    .text-block{
+        width: 90%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-family: 'Merriweather Sans', sans-serif;
+        font-size: 2vh;
+        text-align: justify;
+        padding: 0vh 2vh;
+    }
+    .form{
+        display: flex;
+        width: 90%;
+        margin-top: 2vh;
+        border-radius: 15px;
+        background-color: #FF6700;
+        color: white;
+        font-family: 'Merriweather Sans', sans-serif;
+        box-shadow: 6px 5px 5px 0px #e0e0e0;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
 
 }

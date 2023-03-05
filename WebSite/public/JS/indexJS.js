@@ -26,7 +26,7 @@ function prepareMap(inputelements){
     for(let element of inputelements){
         mapElements.set(element.id,false);
     }
-    mapElements.set('captcha', true);
+    mapElements.set('captcha', false);
 
 }
 function prepareForm(){
