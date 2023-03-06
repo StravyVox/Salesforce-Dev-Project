@@ -63,7 +63,7 @@ function CheckPhone(event){
     Validate();
 }
 function CheckMail(event){
-    var regexp = /^[\w]+@[A-z09]+\.[A-z]+/
+    var regexp = /^[\w\.]+@[A-z09]+\.com\b/
     if(regexp.test(event.target.value)){
         mapElements.set(event.target.id,true);
         event.target.style.border = '0px red';
