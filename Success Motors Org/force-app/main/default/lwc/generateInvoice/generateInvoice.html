@@ -1,0 +1,17 @@
+<template>
+    <lightning-modal-header label='Generate Invoice'></lightning-modal-header>
+    <lightning-modal-body>
+        <template lwc:if={loaded}>
+            <iframe
+            id = 'mainFrameONE'
+            src= '{linkPDF}'
+            height="700px" 
+            width="1100px"
+            title="PDF Form"
+            ></iframe>
+        </template>
+    </lightning-modal-body>
+    <lightning-modal-footer>
+        <button class="slds-button slds-button_brand" onclick={generateInvoice} title="Generate">Generate Invoice</button>
+    </lightning-modal-footer>
+ </template>

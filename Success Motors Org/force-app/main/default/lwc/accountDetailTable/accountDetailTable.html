@@ -1,0 +1,48 @@
+<template>
+    <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-label="Opportunities">
+        <thead>
+          <tr class="slds-line-height_reset">
+            <th class="" scope="col">
+              <div class="slds-truncate" title="Opportunity Name">Opportunity Name</div>
+            </th>
+            <th class="" scope="col">
+              <div class="slds-truncate" title="Created Date">Created Date</div>
+            </th>
+            <th class="" scope="col">
+              <div class="slds-truncate" title="Close Date">Close Date</div>
+            </th>
+            <th class="" scope="col">
+              <div class="slds-truncate" title="Amount">Amount</div>
+            </th>
+            <th class="" scope="col">
+              <div class="slds-truncate" title="Opportunity Product">Opportunity Product</div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+            <template for:each={totalOpportunities} for:item="opportunity">
+                <tr key={opportunity.Id} class="slds-hint-parent">
+                    <th data-label="Opportunity Name" scope="row">
+                      <div class="slds-truncate" title="Cloudhub">
+                          <a data-id={opportunity.Id} onclick={viewOpportunity}>{opportunity.Name}</a>
+                      </div>
+                    </th>
+                    <td data-label="Created Date">
+                        <div class="slds-truncate" title={opportunity.CreatedDate}>{opportunity.CreatedDate}</div>
+                    </td>
+                    <td data-label="Close Date">
+                      <div class="slds-truncate" title={opportunity.CloseDate}>{opportunity.CloseDate}</div>
+                    </td>
+                    <td data-label="Amount">
+                      <div class="slds-truncate" title={opportunity.Amount}>{opportunity.Amount}</div>
+                    </td>
+                    <td data-label="Opportunity Product">
+                      <div class="slds-truncate" title="OpProduct">
+                          <lightning-button label='Opportunity products' data-id={opportunity.Id} onclick={openModal}></lightning-button>
+                      </div>
+                    </td>
+                </tr>
+            </template>
+        </tbody>
+    </table>
+</template>

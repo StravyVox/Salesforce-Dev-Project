@@ -1,0 +1,27 @@
+<template>
+    <template if:true={recordId}>
+        <lightning-modal-header label='Opportunity PDF'>To see info click Load</lightning-modal-header>
+        <lightning-modal-body>
+            <lightning-layout>
+                <lightning-layout-item flexibility="auto" padding="around-small">
+                    <lightning-input type='text' label='Email Subject' value={subject} readonly></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item flexibility="auto" padding="around-small">
+                    <lightning-input type='text' label='Reciever' value ={contactRole.Name} readonly></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item flexibility="auto" padding="around-small">
+                    <lightning-input type='text' label='Email subject' value={contactRole.Email} onchange={emailChanged}></lightning-input>
+                </lightning-layout-item>
+            </lightning-layout>
+            <lightning-textarea class="textAreaBody" label="Email body" onchange={emailBodyChanged} value={emailBody}></lightning-textarea>
+            <template lwc:if={loaded}>
+                <iframe
+                id = 'mainFrameONE' src= '{linkPDF}' height="700px"  width="800px" title="PDF Form"></iframe>
+            </template>
+        </lightning-modal-body>
+        <lightning-modal-footer>
+            <button class="slds-button slds-button_neutral" onclick={loadInfo} title="Generate">Load PDF preview</button>
+            <button class="slds-button slds-button_brand" label="OK" onclick={sendEmail} title="Generate">Send Email</button>
+        </lightning-modal-footer>
+    </template>
+ </template>

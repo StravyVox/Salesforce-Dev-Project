@@ -1,0 +1,32 @@
+<template>
+    <lightning-card title="Accounts Info" if:false={recordId}>
+            <lightning-input
+            class="slds-var-p-around_medium"
+            variant="label-hidden"
+            name="enter-search"
+            placeholder="Search by name of Account or by sum of Opportunities"
+            type="search"
+            value={searchValue}
+            onchange = {searchValueChange}
+            onkeypress={handleEnter}
+            ></lightning-input>
+        <lightning-accordion>
+            <template for:each={visibleAccounts} for:item="account">
+                <lightning-accordion-section key={account.name} name ={account.name} label={account.value}>
+                    <c-account-detail-table total-opportunities = {account.opportunities}></c-account-detail-table>
+                </lightning-accordion-section>
+            </template>
+        </lightning-accordion>
+        <c-account-pagination if:false={recordId} records={totalAccounts} onupdate={updateVisibleAccounts}></c-account-pagination>
+    </lightning-card>
+    <lightning-card title="Account Info" if:true={recordId}>
+    <lightning-accordion>
+        <template for:each={visibleAccounts} for:item="account">
+            <lightning-accordion-section key={account.name} name ={account.name} label={account.value}>
+                <c-account-detail-table total-opportunities = {account.opportunities}></c-account-detail-table>
+            </lightning-accordion-section>
+        </template>
+    </lightning-accordion>
+</lightning-card>
+
+</template>
