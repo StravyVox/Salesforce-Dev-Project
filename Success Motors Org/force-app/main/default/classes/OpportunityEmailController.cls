@@ -26,6 +26,15 @@ public with sharing class OpportunityEmailController {
     public static String ReturnTemplateBody(String OpportunityID,String TemplateName){
         try{
             EmailTemplate template = [SELECT htmlvalue FROM EmailTemplate WHERE DeveloperName = :TemplateName LIMIT 1];
+            Opportunity op = [SELECT Invoice_Number__c from Opportunity Where Id =:OpportunityID LIMIT 1];
+            Pattern regExpPattern = Pattern.compile('body=approved');
+            Matcher regExpMatcher = regExpPattern.matcher(template.htmlvalue);
+            if(regExpMatcher.find()){
+                System.debug('string has matches');
+                Integer position = regExpMatcher.end();
+                template.HtmlValue = template.HtmlValue.substring(0, position) +'&subject=' + op.Invoice_Number__c + template.HtmlValue.substring(position);
+                return template.htmlvalue;
+            }
             return template.htmlvalue;
         }
         catch(System.QueryException ex){
