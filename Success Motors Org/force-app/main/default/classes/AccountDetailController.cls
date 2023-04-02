@@ -1,52 +1,59 @@
 public with sharing class AccountDetailController {
     
     @TestVisible Class AccountInfo {
+        @AuraEnabled
         public String value;
+        @AuraEnabled
         public String id;
+        @AuraEnabled
         public String name;
+        @AuraEnabled
         public List<Opportunity> opportunities;
-        public AccountInfo(String value, String Id, String Name){
+        
+        public AccountInfo(String value, String id, String name, List<Opportunity> opportunitites){
             this.value = value;
-            this.id = Id;
-            this.name = Name;
-            this.opportunities = getOpportunities(Id);
+            this.id = id;
+            this.name = name;
+            this.opportunities = opportunitites;
         }
     }
-    @AuraEnabled (cacheable=true)
-    public static String getAccountsListJSON(){
+    private static List<AccountInfo> returnInfo(List<Account> accounts){
         try {
-            List<Account> accounts = [SELECT ID, NAME FROM Account];
             List<AccountInfo> result = new List<AccountInfo>();
             for (Account acc : accounts) {
                 AccountInfo info = new AccountInfo(
-                    acc.Name + ' with ' + getOpportunities(acc.Id).size() + ' opportunities',
+                    acc.Name + ' with ' + acc.opportunities.size() + ' opportunities',
                     acc.Id,
-                    acc.Name
+                    acc.Name,
+                    acc.opportunities
                 );
                 result.add(info);
             }
-            return JSON.serialize(result);
+            return result;
+        }
+        catch(Exception e){
+            return null;
+        }
+    }
+    @AuraEnabled (cacheable=true)
+    public static List<AccountInfo> getAccountInfoList(){
+        try {
+            List<Account> accounts = [SELECT ID, NAME, (SELECT ID, NAME, CreatedDate, CloseDate, Amount FROM OPPORTUNITIES) FROM ACCOUNT];
+            List<AccountInfo> result = returnInfo(accounts);
+            return result;
             
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
     }
     @AuraEnabled (cacheable=true)
-    public static String SearchByNameOfAccount(String searchString){
+    public static List<AccountInfo> SearchByNameOfAccount(String searchString){
         try {
             String likeSearch =  '%'+searchString+'%';
-            List<Account> accounts = [SELECT ID, NAME FROM Account WHERE Name LIKE :likeSearch];
+            List<Account> accounts = [SELECT ID, NAME, (SELECT ID, NAME, CreatedDate, CloseDate, Amount FROM OPPORTUNITIES) FROM ACCOUNT WHERE Name LIKE :likeSearch];
             if(!accounts.isEmpty()){
-                List<AccountInfo> result = new List<AccountInfo>();
-                for (Account acc : accounts) {
-                    AccountInfo info = new AccountInfo(
-                        acc.Name + ' with ' + getOpportunities(acc.Id).size() + ' opportunities',
-                        acc.Id,
-                        acc.Name
-                    );
-                    result.add(info);
-                }
-                return JSON.serialize(result);
+                List<AccountInfo> result = returnInfo(accounts);
+                return result;
             }
             else{
                 return null;
@@ -57,56 +64,44 @@ public with sharing class AccountDetailController {
         }
     }
     @AuraEnabled (cacheable=true) 
-    public static String SearchBySumOfOpportunities(String searchString){
+    public static List<AccountInfo> SearchBySumOfOpportunities(String searchString){
         try {
-           Integer sum = Integer.valueOf(searchString);
-           List<AggregateResult> accounts = [SELECT COUNT(ID), Account.Id, Account.Name FROM Opportunity group by Account.Name, Account.Id HAVING COUNT(ID) = :sum];
-           if(!accounts.isEmpty()){
-                List<AccountInfo> result = new List<AccountInfo>();
-                for (AggregateResult acc : accounts) {
-                    AccountInfo info = new AccountInfo(
-                        String.valueOf(acc.get('Name')) + ' with ' + String.valueOf(acc.get('expr0')) + ' opportunities',
-                        String.valueOf(acc.get('Id')),
-                        String.valueOf(acc.get('Name'))
-                    );
-                    result.add(info);
-                }
-                return JSON.serialize(result);
-           }
-           else{
+            Integer sum = Integer.valueOf(searchString);
+            List<AggregateResult> accounts = [SELECT COUNT(ID), Account.Id FROM Opportunity group by Account.Id HAVING COUNT(ID) = :sum];
+            List<String> accountIds = new List<String>();
+            for(AggregateResult acc : accounts){
+                 accountIds.add(String.valueOf(acc.get('Id')));
+            }
+            List<Account> resultAccounts = [SELECT ID, NAME, (SELECT ID, NAME, CreatedDate, CloseDate, Amount FROM OPPORTUNITIES) FROM ACCOUNT WHERE ID IN :accountIds];
+            if(!resultAccounts.isEmpty()){
+                List<AccountInfo> result = returnInfo(resultAccounts);
+                return result;
+            }
+            else{
                 return null;
-           }
-            
+            }
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
     }
 
     @AuraEnabled (cacheable=true)
-    public static String getAccount(String Id){
+    public static AccountInfo getAccount(String Id){
         try {
-            Account acc = [SELECT ID, NAME FROM Account WHERE Id = :Id LIMIT 1];
+            Account acc = [SELECT ID, NAME, (SELECT ID, NAME, CreatedDate, CloseDate, Amount FROM OPPORTUNITIES) FROM Account WHERE Id = :Id LIMIT 1];
             AccountInfo result = new AccountInfo(
-                        acc.Name + ' with ' + getOpportunities(acc.Id).size() + ' opportunities',
+                        acc.Name + ' with ' + acc.opportunities.size() + ' opportunities',
                         acc.Id,
-                        acc.Name
+                        acc.Name,
+                        acc.opportunities
                     );
-            return JSON.serialize(result);
+            return result;
             
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
     }
     
-    @AuraEnabled (cacheable=true)
-    public static List<Opportunity> getOpportunities(String accountId){
-        try {
-            List<Opportunity> opportunities = [SELECT ID, NAME, CreatedDate, CloseDate, Amount FROM Opportunity WHERE AccountId = :accountId];
-            return opportunities;
-        } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
-        }
-    }
     @AuraEnabled (cacheable=true)
     public static List<OpportunityLineItem> getOpportunityProduct(String OpportunityId){
         try {

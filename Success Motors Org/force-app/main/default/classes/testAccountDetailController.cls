@@ -27,7 +27,7 @@ public class testAccountDetailController {
         );
         
         Test.startTest();
-        AccountDetailController.AccountInfo[] info = (AccountDetailController.AccountInfo[])JSON.deserialize(AccountDetailController.getAccountsListJSON(), AccountDetailController.AccountInfo[].class);
+        AccountDetailController.AccountInfo[] info = AccountDetailController.getAccountInfoList();
         Test.stopTest();
         Assert.areEqual(checkAcc.Name, info[0].name);
         
@@ -37,7 +37,7 @@ public class testAccountDetailController {
         String searchString = 'Test';
         
         Test.startTest();
-        AccountDetailController.AccountInfo[] info = (AccountDetailController.AccountInfo[])JSON.deserialize(AccountDetailController.SearchByNameOfAccount(searchString), AccountDetailController.AccountInfo[].class);
+        AccountDetailController.AccountInfo[] info = AccountDetailController.SearchByNameOfAccount(searchString);
         Test.stopTest();
         Assert.areEqual('TestAccount', info[0].name);   
     }
@@ -46,8 +46,8 @@ public class testAccountDetailController {
         String searchString = 'TestAlhlhlhlhlh';
         
         Test.startTest();
-        String result = AccountDetailController.SearchByNameOfAccount(searchString);
-       Test.stopTest();
+        AccountDetailController.AccountInfo[] result = AccountDetailController.SearchByNameOfAccount(searchString);
+        Test.stopTest();
         Assert.areEqual(null, result);   
     }
     @IsTest
@@ -55,7 +55,7 @@ public class testAccountDetailController {
         String searchString = '1';
         
         Test.startTest();
-        AccountDetailController.AccountInfo[] info = (AccountDetailController.AccountInfo[])JSON.deserialize(AccountDetailController.SearchBySumOfOpportunities(searchString), AccountDetailController.AccountInfo[].class);
+        AccountDetailController.AccountInfo[] info = AccountDetailController.SearchBySumOfOpportunities(searchString);
         Test.stopTest();
         Assert.areEqual('TestAccount', info[0].name);   
     }
@@ -64,7 +64,7 @@ public class testAccountDetailController {
         String searchString = '50';
         
         Test.startTest();
-        String result = AccountDetailController.SearchBySumOfOpportunities(searchString);
+        AccountDetailController.AccountInfo[] result = AccountDetailController.SearchBySumOfOpportunities(searchString);
         Test.stopTest();
         Assert.areEqual(null, result);   
     }
@@ -74,22 +74,10 @@ public class testAccountDetailController {
         Account checkAcc = [SELECT ID, Name FROM ACCOUNT WHERE NAME = 'TestAccount' LIMIT 1];
         
         Test.startTest();
-        AccountDetailController.AccountInfo info = (AccountDetailController.AccountInfo)JSON.deserialize(AccountDetailController.getAccount(checkAcc.Id), AccountDetailController.AccountInfo.class);
+        AccountDetailController.AccountInfo info = AccountDetailController.getAccount(checkAcc.Id);
         Test.stopTest();
         Assert.areEqual(checkAcc.Name, info.name);
         
     }
-    @IsTest
-    static void testGetOpportunities(){
-        Account checkAcc = [SELECT ID FROM ACCOUNT WHERE NAME = 'TestAccount' LIMIT 1];
-        
-        Test.startTest();
-        List<Opportunity> opportunities = AccountDetailController.getOpportunities(checkAcc.Id);
-        Test.stopTest();
-        Assert.areEqual(1, opportunities.size());
-        Assert.areEqual('TestOp', opportunities[0].Name);
-        
-        
-    }
-
+   
 }
