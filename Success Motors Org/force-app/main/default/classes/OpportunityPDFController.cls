@@ -1,7 +1,17 @@
 public with sharing class OpportunityPDFController {
    
     @AuraEnabled
-    public static Integer CreateDocument(String OpportunityID){
+    public static String getAttachedDocumentID(String OpportunityID){
+        try{
+            ContentDocumentLink returnedDocumentLink = [SELECT ContentDocumentId FROM ContentDocumentLink Where LinkedEntityId = :OpportunityID LIMIT 1];
+            return returnedDocumentLink.ContentDocumentId;
+        }
+        catch(System.QueryException ex){
+            return null;
+        }
+    }
+    @AuraEnabled
+    public static Integer createDocument(String OpportunityID){
         PageReference opportunityPDFFile = new Pagereference('/apex/OpportunityPDF');
         opportunityPDFFile.getParameters().put('id', OpportunityID);
         try{
@@ -16,17 +26,16 @@ public with sharing class OpportunityPDFController {
                 cont.VersionData = opportunityPDFFile.getContentAsPDF();
             }
             cont.Origin = 'H';
-            return UpsertContentVersion(cont, op);
+            return upsertContentVersion(cont, op);
         }
         catch(System.QueryException ex){
             return -1;
         }
        
     }
-    private static Integer UpsertContentVersion(ContentVersion newContentVersion, Opportunity opportunity){
+    private static Integer upsertContentVersion(ContentVersion newContentVersion, Opportunity opportunity){
         try{
-            ContentDocument document = [SELECT ID FROM ContentDocument WHERE 
-            Title = :newContentVersion.Title LIMIT 1];
+            ContentDocument document = [SELECT ID FROM ContentDocument WHERE Title = :newContentVersion.Title LIMIT 1];
             newContentVersion.ContentDocumentId = document.Id;            
             try{
                 upsert newContentVersion;
@@ -38,11 +47,11 @@ public with sharing class OpportunityPDFController {
         }
         catch(System.QueryException ex){
             insert newContentVersion;
-            GenerateLink(newContentVersion.Id, opportunity.Id);
+            generateLink(newContentVersion.Id, opportunity.Id);
             return 2;
         }
     }
-    private static void GenerateLink(String contentID, String OpportunityID){
+    private static void generateLink(String contentID, String OpportunityID){
         ContentVersion contentVer = [SELECT Id, Title, ContentDocumentId FROM ContentVersion WHERE Id = :contentID LIMIT 1];
         ContentDocumentLink contentlink = new ContentDocumentLink();
         contentlink.LinkedEntityId = OpportunityID;

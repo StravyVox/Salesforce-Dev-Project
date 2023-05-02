@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="fd60e678-5ac1-461c-b4fb-cf9dc81e1eb9" >
+		<salesforce:basic-connection username="daniil.davidoskiy@developer.junctionsmotors.com" password="918273645Sv" securityToken="phKuw8OvvDsZeD3f1zxU9Z0X" />
+	</salesforce:sfdc-config>
+	<salesforce:sfdc-config name="Salesforce_ConfigMainOrg" doc:name="Salesforce Config" doc:id="44cd8b3a-882f-453a-8ac4-3b2bacb3bef9" >
+		<salesforce:basic-connection username="daniil.davidoskiy@developer.smotors.com" password="918273645Sm" securityToken="7GSEZedn3LHveqj3NkekOwHF" />
+	</salesforce:sfdc-config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="37b6cdc0-e8ba-4eed-abce-aa0cc7d7bb29" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="muleappFlow" doc:id="c792a6dd-fe90-4b5f-ae15-6e6aea303efe" >
+		<http:listener doc:name="Listener" doc:id="5fcd00a9-f54e-48bc-b744-4b50a7c70414" config-ref="HTTP_Listener_config" path="/startTransfer"/>
+		<salesforce:query doc:name="Query" doc:id="7481e42d-d171-42d8-943c-90d47d021981" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query><![CDATA[SELECT OpportunityName__c,Amount__c, FirstName__c,LastName__c FROM Payment__c]]></salesforce:salesforce-query>
+		</salesforce:query>
+		<logger level="INFO" doc:name="Logger" doc:id="48ea0018-3c63-44e1-b464-42511460bac6" message="HelloWorld"/>
+		<logger level="INFO" doc:name="Logger" doc:id="d5b0b7b9-f40c-4d2a-9612-1b1a28766ebd" message="#[output application/java&#10;---&#10;payload]"/>
+		<salesforce:create doc:name="Create" doc:id="24eedb8e-0dcf-4bb8-994c-5d9a24e81f29" config-ref="Salesforce_ConfigMainOrg" type="Payment__c" />
+		<logger level="INFO" doc:name="Logger" doc:id="91950285-e489-4b2e-a6a2-f80a360c6fba" message="#[output application/java&#10;---&#10;payload]"/>
+	</flow>
+</mule>

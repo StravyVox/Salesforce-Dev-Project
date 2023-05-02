@@ -13,11 +13,7 @@
                     <lightning-input type='text' label='Email subject' value={contactRole.Email} onchange={emailChanged}></lightning-input>
                 </lightning-layout-item>
             </lightning-layout>
-            <lightning-textarea class="textAreaBody" label="Email body" onchange={emailBodyChanged} value={emailBody}></lightning-textarea>
-            <template lwc:if={loaded}>
-                <iframe
-                id = 'mainFrameONE' src= '{linkPDF}' height="700px"  width="800px" title="PDF Form"></iframe>
-            </template>
+            <lightning-input-rich-text disabled-categories="INSERT_CONTENT" onchange={emailBodyChanged} value={emailBody}></lightning-input-rich-text>
         </lightning-modal-body>
         <lightning-modal-footer>
             <button class="slds-button slds-button_neutral" onclick={loadInfo} title="Generate">Load PDF preview</button>

@@ -1,13 +1,10 @@
 global class OpportunityEmailReplyHandler implements Messaging.InboundEmailHandler {
     global Messaging.InboundEmailResult handleInboundEmail(Messaging.InboundEmail email, Messaging.InboundEnvelope envelope) {
         Messaging.InboundEmailResult result = new Messaging.InboundEmailresult();
-        System.debug('OpportunityEmalReplyHandler was activated');
-
         if(email.subject.length()>0){
-            System.debug('Email.subject is greater than 0 '+email.subject);
             String regExPattern='INV-[0-9]+';
-            String InvoiceNumber = FindStringByPattern(regExPattern, email.subject);
-            String resultOfSet = SetResultOfOpportunity(InvoiceNumber, email);
+            String invoiceNumber = findStringByPattern(regExPattern, email.subject);
+            String resultOfSet = setResultOfOpportunity(invoiceNumber, email);
             if(resultOfSet.length()>0){
                 result.success=false;
                 result.message=resultOfSet;
@@ -17,10 +14,9 @@ global class OpportunityEmailReplyHandler implements Messaging.InboundEmailHandl
             }
         }
         else{
-            System.debug('Email has no subject');
-            String regExPattern='INV-[0-9]+';            
-            String InvoiceNumber = FindStringByPattern(regExPattern, email.subject);
-            String resultOfSet = SetResultOfOpportunity(InvoiceNumber, email);
+            String regExPattern='\\bINV-[0-9]+\\b';            
+            String invoiceNumber = findStringByPattern(regExPattern, email.htmlBody);
+            String resultOfSet = setResultOfOpportunity(invoiceNumber, email);
             if(resultOfSet.length()>0){
                 result.success=false;
                 result.message=resultOfSet;
@@ -33,11 +29,10 @@ global class OpportunityEmailReplyHandler implements Messaging.InboundEmailHandl
         return result;
     }
     
-    @TestVisible private String FindStringByPattern(String regularExp, String searchString){
+    @TestVisible private String findStringByPattern(String regularExp, String searchString){
         Pattern regExpPattern = Pattern.compile(regularExp);
         Matcher regExpMatcher = regExpPattern.matcher(searchString);
         if(regExpMatcher.find()){
-            System.debug('string has matches');
             String result = regExpMatcher.group(0);
             return result;
         }
@@ -46,26 +41,26 @@ global class OpportunityEmailReplyHandler implements Messaging.InboundEmailHandl
             return '';
         }
     }
-    @TestVisible private String SetResultOfOpportunity(String OpportunityInvoiceNumber,Messaging.InboundEmail email){
+    @TestVisible private String setResultOfOpportunity(String OpportunityInvoiceNumber,Messaging.InboundEmail email){
         try{
             Opportunity op = [SELECT ID, NAME, StageName FROM Opportunity Where Invoice_Number__c =:OpportunityInvoiceNumber LIMIT 1];
-            String PatternApproved = '\\bapproved\\b';
-            String PatternRejected = '\\brejected\\b';
-            String approvedResult = FindStringByPattern(PatternApproved, email.plainTextBody.toLowerCase());
-            String rejectedResult = FindStringByPattern(PatternRejected, email.plainTextBody.toLowerCase());
+            String patternApproved = '\\bapproved\\b';
+            String patternRejected = '\\brejected\\b';
+            String approvedResult = findStringByPattern(patternApproved, email.htmlBody.toLowerCase());
+            String rejectedResult = findStringByPattern(patternRejected, email.htmlBody.toLowerCase());
             if(approvedResult.length()>0){
-                Schema.DescribeFieldResult fields = Opportunity.StageName.getDescribe();
-                List<Schema.PicklistEntry> opportunityPickList = fields.getPicklistValues();
-                for(Integer i=0;i<opportunityPickList.size();i++)
-                {
-                    if(opportunityPickList[i].getValue() == op.StageName)
-                    { 
-                        op.StageName =opportunityPickList[i+1].getValue();
-                        break;
+                    Schema.DescribeFieldResult fields = Opportunity.StageName.getDescribe();
+                    List<Schema.PicklistEntry> opportunityPickList = fields.getPicklistValues();
+                    for(Integer i=0;i<opportunityPickList.size();i++)
+                    {
+                        if(opportunityPickList[i].getValue() == op.StageName)
+                        { 
+                            op.StageName =opportunityPickList[i+1].getValue();
+                            break;
+                        }
                     }
-                }
-                update op;
-                return '';
+                    update op;
+                    return '';
             }
             else if(rejectedResult.length()>0){
                 op.StageName='Closed Lost';

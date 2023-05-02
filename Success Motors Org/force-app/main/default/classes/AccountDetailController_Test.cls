@@ -1,5 +1,5 @@
 @isTest
-public class testAccountDetailController {
+public class AccountDetailController_Test {
     @TestSetup
     static void makeData(){
         Contact testCon = new Contact(
@@ -13,23 +13,45 @@ public class testAccountDetailController {
         insert testCon;
         Opportunity testOpportunity = new Opportunity(
             Name='TestOp',
-            StageName='Prospecting',
+            StageName='Closed Won',
+            Amount = 500,
             CloseDate=Date.today().addDays(3),
             AccountId=testAcc.Id,
             ContactId=testCon.Id
             );
         insert testOpportunity;
+        Id pricebookId = Test.getStandardPricebookId();
+        Product2 prod = new Product2(
+            Name = 'Product X',
+            ProductCode = 'Pro-X',
+            isActive = true
+        );
+        insert prod;
+        PricebookEntry pbEntry = new PricebookEntry(
+            Pricebook2Id = pricebookId,
+            Product2Id = prod.Id,
+            UnitPrice = 100.00,
+            IsActive = true
+        );
+        insert pbEntry;
+        OpportunityLineItem oli = new OpportunityLineItem(
+            OpportunityId = testOpportunity.Id,
+            Quantity = 5,
+            PricebookEntryId = pbEntry.Id,
+            TotalPrice = 5 * pbEntry.UnitPrice
+        );
+        insert oli;
     }
     @IsTest
     static void testGetAccountsListJSON(){
-        Account checkAcc = new Account(
-            Name='TestAccount'
-        );
+        
+        String Name='TestAccount';
+        
         
         Test.startTest();
         AccountDetailController.AccountInfo[] info = AccountDetailController.getAccountInfoList();
         Test.stopTest();
-        Assert.areEqual(checkAcc.Name, info[0].name);
+        Assert.areEqual(Name, info[0].name);
         
     }
     @IsTest
@@ -52,7 +74,7 @@ public class testAccountDetailController {
     }
     @IsTest
     static void testSearchBySumOfOpportunities(){
-        String searchString = '1';
+        String searchString = '500';
         
         Test.startTest();
         AccountDetailController.AccountInfo[] info = AccountDetailController.SearchBySumOfOpportunities(searchString);
@@ -61,7 +83,7 @@ public class testAccountDetailController {
     }
     @IsTest
     static void testFailSearchBySumOfOpportunities(){
-        String searchString = '50';
+        String searchString = '45';
         
         Test.startTest();
         AccountDetailController.AccountInfo[] result = AccountDetailController.SearchBySumOfOpportunities(searchString);
@@ -78,6 +100,13 @@ public class testAccountDetailController {
         Test.stopTest();
         Assert.areEqual(checkAcc.Name, info.name);
         
+    }
+    @isTest
+    static void getOpportunityProduct(){
+        Opportunity testOp = [SELECT ID FROM OPPORTUNITY LIMIT 1];
+        OpportunityLineItem[] testItems = [SELECT NAME FROM OPPORTUNITYLINEITEM Where OpportunityId = :testOp.Id];
+        OpportunityLineItem[] resultedItems = AccountDetailController.getOpportunityProduct(testOp.Id);
+        Assert.areEqual(testItems.size(), resultedItems.size());
     }
    
 }

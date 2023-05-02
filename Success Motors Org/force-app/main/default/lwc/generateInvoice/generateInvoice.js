@@ -1,6 +1,6 @@
 import { api,track } from 'lwc';
 import LightningModal from 'lightning/modal';
-import CreateDocument from '@salesforce/apex/OpportunityPDFController.CreateDocument';
+import createDocument from '@salesforce/apex/OpportunityPDFController.createDocument';
 import { CloseActionScreenEvent } from 'lightning/actions';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class generateInvoice extends LightningModal {
@@ -26,7 +26,7 @@ export default class generateInvoice extends LightningModal {
         this.dispatchEvent(new CloseActionScreenEvent());
     }
     generateInvoice(){
-        CreateDocument({OpportunityID: this.recordId}).then(
+        createDocument({OpportunityID: this.recordId}).then(
             result=>{
                 console.log(result);
                 this.closeAction();

@@ -1,0 +1,24 @@
+<template>
+    <lightning-card title="Batch Scheduler">
+        <template if:false={BatchSet} > 
+            <lightning-input class="slds-p-around_small" onchange={changeBatchValue} label="Input Batch Class Name to schedule"></lightning-input>
+            <lightning-input class="slds-p-around_small" onchange={changeJobValue} label="Input Job Name to check" placeholder={JobName}></lightning-input>
+            <lightning-button variant ="brand" class="slds-p-around_small" title="ApproveBatch" label="ApproveBatch" onclick={addBatchName}></lightning-button>
+        </template>
+        <template if:true={BatchSet}>
+            <p class="slds-p-around_small">
+                Please enter a CRON 
+                <lightning-helptext icon-variant="warning" content="A cron expression is a string consisting of six or seven subexpressions (fields) that describe individual details of the schedule"></lightning-helptext>
+                 expression
+            </p>
+            <lightning-input class="slds-p-around_small" label="CRON String" onchange={changeCRONValue}></lightning-input>
+            <lightning-button variant ="brand" class="slds-p-horizontal_small" label="Run Once" title="Run Once" onclick={runOnce}></lightning-button>
+            <template if:false={JobSet}>
+                <lightning-button variant ="brand" label="Schedule job" title="Schedule Job" onclick={scheduleJob}></lightning-button>
+            </template>
+            <template if:true={JobSet}>
+                <lightning-button variant ="destructive" label="Abort job" title="Abort Job" onclick={abortJob}></lightning-button>
+            </template>
+        </template>
+    </lightning-card>
+</template>

@@ -10,7 +10,7 @@
             onchange = {searchValueChange}
             onkeypress={handleEnter}
             ></lightning-input>
-        <lightning-accordion>
+        <lightning-accordion allow-multiple-sections-open>
             <template for:each={visibleAccounts} for:item="account">
                 <lightning-accordion-section key={account.name} name ={account.name} label={account.value}>
                     <c-account-detail-table total-opportunities = {account.opportunities}></c-account-detail-table>
@@ -20,7 +20,7 @@
         <c-account-pagination if:false={recordId} records={totalAccounts} onupdate={updateVisibleAccounts}></c-account-pagination>
     </lightning-card>
     <lightning-card title="Account Info" if:true={recordId}>
-    <lightning-accordion>
+    <lightning-accordion allow-multiple-sections-open>
         <template for:each={visibleAccounts} for:item="account">
             <lightning-accordion-section key={account.name} name ={account.name} label={account.value}>
                 <c-account-detail-table total-opportunities = {account.opportunities}></c-account-detail-table>
@@ -28,5 +28,4 @@
         </template>
     </lightning-accordion>
 </lightning-card>
-
 </template>

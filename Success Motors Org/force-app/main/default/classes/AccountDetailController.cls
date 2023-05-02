@@ -22,12 +22,14 @@ public with sharing class AccountDetailController {
             List<AccountInfo> result = new List<AccountInfo>();
             for (Account acc : accounts) {
                 AccountInfo info = new AccountInfo(
-                    acc.Name + ' with ' + acc.opportunities.size() + ' opportunities',
+                    acc.Name + ' with ' + acc.opportunities.size() + ' closed won opportunities with total amount '+totalAmount(acc.opportunities),
                     acc.Id,
                     acc.Name,
                     acc.opportunities
                 );
-                result.add(info);
+                if(acc.opportunities.size()>0){
+                    result.add(info);
+                }
             }
             return result;
         }
@@ -35,10 +37,17 @@ public with sharing class AccountDetailController {
             return null;
         }
     }
+    private static Decimal totalAmount(List<Opportunity> oppportunities){
+        Decimal totalAmount = 0;
+        for(Opportunity op : oppportunities){
+            totalAmount+=op.Amount;
+        }
+        return totalAmount;
+    }
     @AuraEnabled (cacheable=true)
     public static List<AccountInfo> getAccountInfoList(){
         try {
-            List<Account> accounts = [SELECT ID, NAME, (SELECT ID, NAME, CreatedDate, CloseDate, Amount FROM OPPORTUNITIES) FROM ACCOUNT];
+            List<Account> accounts = [SELECT ID, NAME, (SELECT ID, NAME, CreatedDate, CloseDate, Amount FROM OPPORTUNITIES WHERE StageName = 'Closed Won') FROM ACCOUNT];
             List<AccountInfo> result = returnInfo(accounts);
             return result;
             
@@ -47,10 +56,10 @@ public with sharing class AccountDetailController {
         }
     }
     @AuraEnabled (cacheable=true)
-    public static List<AccountInfo> SearchByNameOfAccount(String searchString){
+    public static List<AccountInfo> searchByNameOfAccount(String searchString){
         try {
-            String likeSearch =  '%'+searchString+'%';
-            List<Account> accounts = [SELECT ID, NAME, (SELECT ID, NAME, CreatedDate, CloseDate, Amount FROM OPPORTUNITIES) FROM ACCOUNT WHERE Name LIKE :likeSearch];
+            String likeSearch =  searchString+'%';
+            List<Account> accounts = [SELECT ID, NAME, (SELECT ID, NAME, CreatedDate, CloseDate, Amount FROM OPPORTUNITIES WHERE StageName = 'Closed Won') FROM ACCOUNT WHERE Name LIKE :likeSearch];
             if(!accounts.isEmpty()){
                 List<AccountInfo> result = returnInfo(accounts);
                 return result;
@@ -64,15 +73,16 @@ public with sharing class AccountDetailController {
         }
     }
     @AuraEnabled (cacheable=true) 
-    public static List<AccountInfo> SearchBySumOfOpportunities(String searchString){
+    public static List<AccountInfo> searchBySumOfOpportunities(String searchString){
         try {
-            Integer sum = Integer.valueOf(searchString);
-            List<AggregateResult> accounts = [SELECT COUNT(ID), Account.Id FROM Opportunity group by Account.Id HAVING COUNT(ID) = :sum];
+            String likeSearch =  searchString+'.*';
             List<String> accountIds = new List<String>();
-            for(AggregateResult acc : accounts){
-                 accountIds.add(String.valueOf(acc.get('Id')));
+            for(AggregateResult acc : [SELECT SUM(Amount), Account.Id FROM Opportunity WHERE StageName = 'Closed Won' group by Account.Id]){
+                if(Pattern.matches(likeSearch, String.valueOf(acc.get('expr0')))){
+                    accountIds.add(String.valueOf(acc.get('Id')));
+                }
             }
-            List<Account> resultAccounts = [SELECT ID, NAME, (SELECT ID, NAME, CreatedDate, CloseDate, Amount FROM OPPORTUNITIES) FROM ACCOUNT WHERE ID IN :accountIds];
+            List<Account> resultAccounts = [SELECT ID, NAME, (SELECT ID, NAME, CreatedDate, CloseDate, Amount FROM OPPORTUNITIES WHERE StageName = 'Closed Won') FROM ACCOUNT WHERE ID IN :accountIds];
             if(!resultAccounts.isEmpty()){
                 List<AccountInfo> result = returnInfo(resultAccounts);
                 return result;
@@ -88,9 +98,9 @@ public with sharing class AccountDetailController {
     @AuraEnabled (cacheable=true)
     public static AccountInfo getAccount(String Id){
         try {
-            Account acc = [SELECT ID, NAME, (SELECT ID, NAME, CreatedDate, CloseDate, Amount FROM OPPORTUNITIES) FROM Account WHERE Id = :Id LIMIT 1];
+            Account acc = [SELECT ID, NAME, (SELECT ID, NAME, CreatedDate, CloseDate, Amount FROM OPPORTUNITIES WHERE StageName = 'Closed Won') FROM Account WHERE Id = :Id LIMIT 1];
             AccountInfo result = new AccountInfo(
-                        acc.Name + ' with ' + acc.opportunities.size() + ' opportunities',
+                        acc.Name + ' with ' + acc.opportunities.size() + ' closed won opportunities with total amount '+totalAmount(acc.opportunities),
                         acc.Id,
                         acc.Name,
                         acc.opportunities

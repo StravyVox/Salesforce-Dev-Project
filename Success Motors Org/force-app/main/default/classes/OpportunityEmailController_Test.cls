@@ -1,11 +1,5 @@
 @isTest
-public class testOpportunityEmailController {
-    Class EmailWrapper {
-        public String opportunityId;
-        public List<String> toAddress;
-        public String subject;
-        public String body;
-    }
+public class OpportunityEmailController_Test {
     @TestSetup
     static void makeData(){
         Contact testCon = new Contact(
@@ -37,7 +31,7 @@ public class testOpportunityEmailController {
                 Name='TestTemp',
                 DeveloperName='TestUniqueName',
                 Body='TestBody',
-                htmlvalue='TestBody',
+                htmlvalue='TestBody?body=approved',
                 Subject='TestSubject',
                 TemplateType='custom',
                 FolderId='0052w00000FSPQXAA5'
@@ -50,7 +44,7 @@ public class testOpportunityEmailController {
         Opportunity op = [SELECT Id, Name From Opportunity Where StageName='Prospecting' LIMIT 1];
         String expected = 'TestContact Test';
         Test.startTest();
-           Contact result = (Contact)JSON.deserialize(OpportunityEmailController.ReturnPrimaryRoleAccount(op.Id), Contact.class); 
+           Contact result = (Contact)JSON.deserialize(OpportunityEmailController.returnPrimaryRoleAccount(op.Id), Contact.class); 
         Test.stopTest();
         Assert.areEqual(expected, result.Name);
     }
@@ -59,24 +53,24 @@ public class testOpportunityEmailController {
         Opportunity op = [SELECT Id, Name,Invoice_Number__c From Opportunity Where StageName='Prospecting' LIMIT 1];
         String expected = 'TestSubject'+' '+op.Invoice_Number__c;
         Test.startTest();
-            String resultstring = OpportunityEmailController.ReturnTemplateSubject(op.Id, 'TestUniqueName');
+            String resultstring = OpportunityEmailController.returnTemplateSubject(op.Id, 'TestUniqueName');
         Test.stopTest();
         Assert.areEqual(expected, resultstring);
     }
     @IsTest
     static void testReturnTemplateBody() {
         Opportunity op = [SELECT Id, Name,Invoice_Number__c From Opportunity Where StageName='Prospecting' LIMIT 1];
-        String expected = 'TestBody';
+        String expected = 'TestBody?body=approved&subject=INV-';
         Test.startTest();
-          String result = OpportunityEmailController.ReturnTemplateBody(op.Id,'TestUniqueName');
+          String result = OpportunityEmailController.returnTemplateBody(op.Id,'TestUniqueName');
           System.debug(result);
         Test.stopTest();
-        Assert.areEqual(expected, result);
+        System.assert(result.contains(expected));
     }
     @IsTest
     static void testSendEmail() {
         Opportunity op = [SELECT Id, Name,Invoice_Number__c From Opportunity Where StageName='Prospecting' LIMIT 1];
-        EmailWrapper testWrapper = new EmailWrapper();
+        OpportunityEmailController.EmailWrapper testWrapper = new OpportunityEmailController.EmailWrapper();
         testWrapper.opportunityId=op.id;
         testWrapper.toAddress=new List<String>{'stravyvox@gmail.com'};
         testWrapper.subject='TestSubject';

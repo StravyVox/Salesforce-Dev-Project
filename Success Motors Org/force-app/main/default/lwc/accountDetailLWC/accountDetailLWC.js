@@ -1,8 +1,8 @@
 import { LightningElement, wire,track,api } from 'lwc';
 import getAccountInfoList from '@salesforce/apex/AccountDetailController.getAccountInfoList'
 import getAccount from '@salesforce/apex/AccountDetailController.getAccount';
-import SearchByNameOfAccount from '@salesforce/apex/AccountDetailController.SearchByNameOfAccount';
-import SearchBySumOfOpportunities from '@salesforce/apex/AccountDetailController.SearchBySumOfOpportunities';
+import searchByNameOfAccount from '@salesforce/apex/AccountDetailController.searchByNameOfAccount';
+import searchBySumOfOpportunities from '@salesforce/apex/AccountDetailController.searchBySumOfOpportunities';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class AccountDetailLWC extends LightningElement {
     visibleAccounts;
@@ -37,6 +37,7 @@ export default class AccountDetailLWC extends LightningElement {
     
     searchValueChange(event){
         this.searchValue = event.target.value;
+        this.searchForAccounts();
     }
     updateVisibleAccounts(event){
         console.log('Update VisibleRecords');
@@ -52,15 +53,16 @@ export default class AccountDetailLWC extends LightningElement {
     searchForAccounts(){
         if(!isNaN(this.searchValue) && this.searchValue.length>0){
             console.log('Search by sum is activated');
-            SearchBySumOfOpportunities({searchString: this.searchValue})
+            searchBySumOfOpportunities({searchString: this.searchValue})
             .then(result=>{
                 console.log('Result by Sum is get');
                 console.log(result);
-                if(result!=null){
+                if(result!=null && result.length > 0){
                     this.totalAccounts = result;
                 }
                 else{
-                    this.sendErrorMessage('Nothing was found');
+                    this.totalAccounts = [];
+                    //this.sendErrorMessage('Nothing was found');
                 }
             }).catch(error=>{
                 console.log(error.message);
@@ -68,15 +70,16 @@ export default class AccountDetailLWC extends LightningElement {
         }
         else if(this.searchValue.length>0){
             console.log('Search by name is activated');
-            SearchByNameOfAccount({searchString: this.searchValue})
+            searchByNameOfAccount({searchString: this.searchValue})
             .then(result=>{
                 console.log('Result by Name is get');
                 console.log(result);
-                if(result!=null){
+                if(result!=null && result.length > 0){
                     this.totalAccounts = result;
-                    }
+                }
                 else{
-                    this.sendErrorMessage('Nothing was found');
+                    this.totalAccounts = [];
+                    //this.sendErrorMessage('Nothing was found');
                 }
             }).catch(error=>{
                 console.log(error.message);
@@ -89,13 +92,5 @@ export default class AccountDetailLWC extends LightningElement {
                 this.totalAccounts = result;
             })
         }
-    }
-    sendErrorMessage(result){
-        var eventMessage = new ShowToastEvent({
-            title:'Oops',
-            variant: 'error',
-            message:result
-        });
-        this.dispatchEvent(eventMessage);
     }
 }

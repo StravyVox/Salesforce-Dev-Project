@@ -1,6 +1,6 @@
 public with sharing class OpportunityEmailController {
     @AuraEnabled
-    public static String ReturnPrimaryRoleAccount(String OpportunityID){
+    public static String returnPrimaryRoleAccount(String OpportunityID){
         try{
             OpportunityContactRole contact = [SELECT ContactId From OpportunityContactRole WHERE OpportunityId = :OpportunityID lIMIT 1];
             Contact contactFromSOQL =  [SELECT Id, Name, Email FROM Contact Where Id = :contact.ContactId LIMIT 1];
@@ -12,7 +12,7 @@ public with sharing class OpportunityEmailController {
         }
     }
     @AuraEnabled
-    public static String ReturnTemplateSubject(String OpportunityID, String TemplateName){
+    public static String returnTemplateSubject(String OpportunityID, String TemplateName){
         try{
            EmailTemplate template = [SELECT Subject FROM EmailTemplate WHERE DeveloperName = :TemplateName LIMIT 1];
            Opportunity op = [SELECT Invoice_Number__c from Opportunity Where Id =:OpportunityID LIMIT 1];
@@ -23,7 +23,7 @@ public with sharing class OpportunityEmailController {
         }
     }
     @AuraEnabled
-    public static String ReturnTemplateBody(String OpportunityID,String TemplateName){
+    public static String returnTemplateBody(String OpportunityID,String TemplateName){
         try{
             EmailTemplate template = [SELECT htmlvalue FROM EmailTemplate WHERE DeveloperName = :TemplateName LIMIT 1];
             Opportunity op = [SELECT Invoice_Number__c from Opportunity Where Id =:OpportunityID LIMIT 1];
@@ -42,7 +42,7 @@ public with sharing class OpportunityEmailController {
         }
     }
     @AuraEnabled
-    public static Integer SendMail(String emailDetail) {
+    public static Integer sendMail(String emailDetail) {
         EmailWrapper emailDetails = (EmailWrapper) JSON.deserialize(emailDetail, EmailWrapper.class);
         Messaging.reserveSingleEmailCapacity(1);
         try {
@@ -61,16 +61,15 @@ public with sharing class OpportunityEmailController {
         try{
             List<String> result = new List<String>();
             Opportunity op = [SELECT Invoice_Number__c FROM Opportunity WHERE ID = :OpportunityID LIMIT 1];
-            ContentDocument doc = [SELECT ID FROM ContentDocument Where Title = :op.Invoice_Number__c LIMIT 1];
-            ContentVersion vers  = [SELECT ID FROM CONTENTVERSION WHERE ContentDocumentId =:doc.Id AND isLatest =true LIMIT 1];
-            result.add(vers.Id);
+            ContentDocument doc = [SELECT ID, LatestPublishedVersionId FROM ContentDocument Where Title = :op.Invoice_Number__c LIMIT 1];
+            result.add(doc.LatestPublishedVersionId);
             return result;
         }
         catch(System.QueryException ex){
             return null;
         }
     }
-    Class EmailWrapper {
+    @TestVisible Class EmailWrapper {
         public String opportunityId;
         public List<String> toAddress;
         public String subject;

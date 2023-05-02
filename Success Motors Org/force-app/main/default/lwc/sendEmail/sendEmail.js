@@ -1,26 +1,28 @@
 import { api,track } from 'lwc';
 import LightningModal from 'lightning/modal';
+import { NavigationMixin } from 'lightning/navigation';
 import { CloseActionScreenEvent } from 'lightning/actions';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import ReturnPrimaryRoleAccount from '@salesforce/apex/OpportunityEmailController.ReturnPrimaryRoleAccount';
-import ReturnTemplateBody from '@salesforce/apex/OpportunityEmailController.ReturnTemplateBody';
-import ReturnTemplateSubject from '@salesforce/apex/OpportunityEmailController.ReturnTemplateSubject';
-import SendMail from '@salesforce/apex/OpportunityEmailController.SendMail';
+import returnPrimaryRoleAccount from '@salesforce/apex/OpportunityEmailController.returnPrimaryRoleAccount';
+import returnTemplateBody from '@salesforce/apex/OpportunityEmailController.returnTemplateBody';
+import returnTemplateSubject from '@salesforce/apex/OpportunityEmailController.returnTemplateSubject';
+import sendMail from '@salesforce/apex/OpportunityEmailController.sendMail';
+import getAttachedDocumentID from '@salesforce/apex/OpportunityPDFController.getAttachedDocumentID';
 
-export default class SendEmail extends LightningModal {
+export default class SendEmail extends NavigationMixin(LightningModal) {
     @track subject = 'Loading...';
     @track contactRole = {Email: 'Loading...', Name: 'Loading...'};
     @track emailBody = 'Loading...';
     @track loaded = false;
     @track linkPDF = '/apex/OpportunityPDF?id='+this.recordId;
-    
     @track _recordId;
-
+    documentID;
+    
     @api set recordId(value) {
         this._recordId = value;
 
         console.log('Current recordId is '+ value);
-        ReturnPrimaryRoleAccount({OpportunityID: value}).then(
+        returnPrimaryRoleAccount({OpportunityID: value}).then(
             result=>{
                 this.contactRole =  JSON.parse(result);
                 console.log('Contact role is '+ this.contactRole.Email);
@@ -30,7 +32,7 @@ export default class SendEmail extends LightningModal {
                 this.closeAction(-1);
             }
         );
-        ReturnTemplateSubject({OpportunityID: value, TemplateName: "Opportunity_Bill_1678894162036"}).then(
+        returnTemplateSubject({OpportunityID: value, TemplateName: "Opportunity_Bill_1678894162036"}).then(
             result=>{ 
                 console.log('Template subject is '+result);
                 this.subject = result;
@@ -40,9 +42,10 @@ export default class SendEmail extends LightningModal {
                 this.closeAction(-1);
             }
         );
-        ReturnTemplateBody({OpportunityID: value,TemplateName: "Opportunity_Bill_1678894162036"}).then(
+        returnTemplateBody({OpportunityID: value,TemplateName: "Opportunity_Bill_1678894162036"}).then(
             result=>{
                 console.log('Template body is '+result);
+                
                 this.emailBody = result;
             }
         ).catch(
@@ -50,6 +53,16 @@ export default class SendEmail extends LightningModal {
                 this.closeAction(-1);
             }
         );
+        getAttachedDocumentID({OpportunityID: this._recordId}).then(result=>{
+            if(result!=null)
+            {
+                console.log("GetAttchedDocumentId is: "+result);
+                this.documentID = result;
+            }
+            else{
+                console.log("Returned null");
+            }
+        })
     }
 
     get recordId() {
@@ -69,7 +82,7 @@ export default class SendEmail extends LightningModal {
             subject: this.subject,
             body: this.emailBody
         };
-        SendMail({emailDetail: JSON.stringify(emailBody)}).then(
+        sendMail({emailDetail: JSON.stringify(emailBody)}).then(
             result=>{
                 this.closeAction(result);
             }
@@ -79,8 +92,17 @@ export default class SendEmail extends LightningModal {
     }
 
     loadInfo(){
-        this.linkPDF = '/apex/OpportunityPDF?id='+this.recordId;
-        this.loaded = true;
+        console.log("Activated loadInfo");
+        console.log("DocId is: "+this.documentID);
+        this[NavigationMixin.Navigate]({
+            type: 'standard__namedPage',
+            attributes: {
+                pageName: 'filePreview',
+            },
+            state:{
+                selectedRecordId: this.documentID
+            }
+        })
     }
     closeAction(result) {   
         this.dispatchEvent(new CloseActionScreenEvent());

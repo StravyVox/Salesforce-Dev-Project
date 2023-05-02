@@ -1,5 +1,5 @@
 @isTest
-public class testOpportunityPDFExtension {
+public class OpportunityPDFExtension_Test {
     @TestSetup
     static void makeData(){
         Contact testCon = new Contact(
