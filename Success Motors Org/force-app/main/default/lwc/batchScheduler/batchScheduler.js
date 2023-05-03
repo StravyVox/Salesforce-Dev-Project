@@ -7,7 +7,7 @@ import abortJob from '@salesforce/apex/BatchSchedulerLWCController.abortJob';
 
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class BatchScheduler extends LightningElement {
-    @api BatchName;
+    @api BatchName = 'BirthdayMassEmailSender';
     BatchSet = false;
     JobSet = false;
     @api BatchNameSet;
@@ -31,7 +31,7 @@ export default class BatchScheduler extends LightningElement {
             }
             else{
                 console.log("Error happened");
-                this.sendMessage(0);
+                this.sendMessage(3);
             }
         })
     }

@@ -1,7 +1,7 @@
 <template>
     <lightning-card title="Batch Scheduler">
         <template if:false={BatchSet} > 
-            <lightning-input class="slds-p-around_small" onchange={changeBatchValue} label="Input Batch Class Name to schedule"></lightning-input>
+            <lightning-input class="slds-p-around_small" onchange={changeBatchValue} label="Input Batch Class Name to schedule" placeholder={BatchName}></lightning-input>
             <lightning-input class="slds-p-around_small" onchange={changeJobValue} label="Input Job Name to check" placeholder={JobName}></lightning-input>
             <lightning-button variant ="brand" class="slds-p-around_small" title="ApproveBatch" label="ApproveBatch" onclick={addBatchName}></lightning-button>
         </template>

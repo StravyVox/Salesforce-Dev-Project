@@ -18,11 +18,11 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 	<flow name="muleappFlow" doc:id="c792a6dd-fe90-4b5f-ae15-6e6aea303efe" >
 		<http:listener doc:name="Listener" doc:id="5fcd00a9-f54e-48bc-b744-4b50a7c70414" config-ref="HTTP_Listener_config" path="/startTransfer"/>
 		<salesforce:query doc:name="Query" doc:id="7481e42d-d171-42d8-943c-90d47d021981" config-ref="Salesforce_Config">
-			<salesforce:salesforce-query><![CDATA[SELECT OpportunityName__c,Amount__c, FirstName__c,LastName__c FROM Payment__c]]></salesforce:salesforce-query>
+			<salesforce:salesforce-query><![CDATA[SELECT 	Name, OpportunityName__c,Amount__c, FirstName__c,LastName__c FROM Payment__c]]></salesforce:salesforce-query>
 		</salesforce:query>
 		<logger level="INFO" doc:name="Logger" doc:id="48ea0018-3c63-44e1-b464-42511460bac6" message="HelloWorld"/>
 		<logger level="INFO" doc:name="Logger" doc:id="d5b0b7b9-f40c-4d2a-9612-1b1a28766ebd" message="#[output application/java&#10;---&#10;payload]"/>
-		<salesforce:create doc:name="Create" doc:id="24eedb8e-0dcf-4bb8-994c-5d9a24e81f29" config-ref="Salesforce_ConfigMainOrg" type="Payment__c" />
+		<salesforce:upsert objectType="Payment__c" doc:name="Upsert" doc:id="e4a4413a-673a-4480-a4bc-e7828313bd39" config-ref="Salesforce_ConfigMainOrg" externalIdFieldName="Name"/>
 		<logger level="INFO" doc:name="Logger" doc:id="91950285-e489-4b2e-a6a2-f80a360c6fba" message="#[output application/java&#10;---&#10;payload]"/>
 	</flow>
 </mule>
