@@ -19,4 +19,4 @@ public class BirthdayMassEmailSender_Test {
             AsyncApexJob job = [SELECT Status FROM AsyncApexJob Where Id =:batchInstanceId];
             System.assert(job.Status == 'Completed');
     }
-}
+} 

@@ -4,17 +4,20 @@ import runJobOnce from '@salesforce/apex/BatchSchedulerLWCController.runJobOnce'
 import isJobAlreadyQueued from '@salesforce/apex/BatchSchedulerLWCController.isJobAlreadyQueued';
 import scheduleJob from '@salesforce/apex/BatchSchedulerLWCController.scheduleJob';
 import abortJob from '@salesforce/apex/BatchSchedulerLWCController.abortJob';
-
+import TitleLabel from '@salesforce/label/c.Batch_Title'
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+
 export default class BatchScheduler extends LightningElement {
-    @api BatchName = 'BirthdayMassEmailSender';
+    @api BatchClassName;
+    @api BatchNameSet;
+    @api JobName;
+    @api CRONExp;
+    @api disabledInput = false;
     BatchSet = false;
     JobSet = false;
-    @api BatchNameSet;
-    @api JobName = 'batchSchedulerLWCJob';
-    @api CRONExp;
+    label = TitleLabel;
     changeBatchValue(event){
-        this.BatchName = event.target.value;
+        this.BatchClassName = event.target.value;
     }
     changeJobValue(event){
         this.JobName = event.target.value;
@@ -23,32 +26,36 @@ export default class BatchScheduler extends LightningElement {
         this.CRONExp = event.target.value;
     }
     addBatchName(){
-        trySetBatch({BatchName: this.BatchName}).then(result=>{
-            console.log("Result is "+result);
+        trySetBatch({BatchName: this.BatchClassName})
+        .then(result=>{
             if(result==true){
                 this.BatchSet = true;
                 this.checkIfJobAlreadySet();
             }
             else{
-                console.log("Error happened");
                 this.sendMessage(3);
             }
         })
     }
-    
+    connectedCallback(){
+        this.addBatchName();
+    }
     checkIfJobAlreadySet(){
-        console.log("Check if job activated");
-        isJobAlreadyQueued({jobName: this.JobName}).then(result=>{
+        isJobAlreadyQueued({jobName: this.JobName})
+        .then(result=>{
             if(result){
                 this.JobSet = true;
+                this.disabledInput = true;
             }
             else{
                 this.JobSet = false;
+                this.disabledInput = false;
             }
         });
     }
     runOnce(){
-        runJobOnce({batchName: this.BatchName, jobName: this.JobName}).then(result=>{
+        runJobOnce({batchName: this.BatchClassName, jobName: this.JobName})
+        .then(result=>{
             if(result){
                 this.sendMessage(1);
             }
@@ -58,10 +65,12 @@ export default class BatchScheduler extends LightningElement {
         });
     }
     abortJob(){
-        abortJob({jobName:this.JobName}).then(result=>{
+        abortJob({jobName:this.JobName})
+        .then(result=>{
             if(result){
                 this.sendMessage(2);
                 this.JobSet = false;
+                this.disabledInput = false;
             }
             else{
                 this.sendMessage(-1);
@@ -69,7 +78,8 @@ export default class BatchScheduler extends LightningElement {
         })
     }
     scheduleJob(){
-        scheduleJob({batchName: this.BatchName, jobName: this.JobName, cronExp: this.CRONExp}).then(result=>{
+        scheduleJob({batchName: this.BatchClassName, jobName: this.JobName, cronExp: this.CRONExp})
+        .then(result=>{
             if(result){
                 this.sendMessage(1);
                 

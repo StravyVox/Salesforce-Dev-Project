@@ -12,7 +12,10 @@ public with sharing class OpportunityPDFController {
     }
     @AuraEnabled
     public static Integer createDocument(String OpportunityID){
-        PageReference opportunityPDFFile = new Pagereference('/apex/OpportunityPDF');
+        ApexPage opportunityPage = [SELECT Name,NamespacePrefix FROM ApexPage WHERE NAME = 'OpportunityPDF' AND NamespacePrefix = 'SMotors'];
+        System.debug('/apex/'+opportunityPage.NamespacePrefix+'__'+opportunityPage.Name);
+        PageReference opportunityPDFFile = new Pagereference('/apex/'+opportunityPage.NamespacePrefix+'__'+opportunityPage.Name);
+        
         opportunityPDFFile.getParameters().put('id', OpportunityID);
         try{
             Opportunity op = [SELECT Invoice_Number__c FROM Opportunity WHERE ID = :OpportunityID LIMIT 1];
@@ -49,6 +52,7 @@ public with sharing class OpportunityPDFController {
             insert newContentVersion;
             generateLink(newContentVersion.Id, opportunity.Id);
             return 2;
+            
         }
     }
     private static void generateLink(String contentID, String OpportunityID){

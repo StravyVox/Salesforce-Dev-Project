@@ -1,7 +1,7 @@
 <template>
-        <lightning-modal-header label='Opportunity product'></lightning-modal-header>
+        <lightning-modal-header label={label}></lightning-modal-header>
             <lightning-modal-body>
-                        <lightning-datatable
+                    <lightning-datatable
                     key-field="Name"
                     data={opportunityProducts}
                     columns={cols}

@@ -1,12 +1,12 @@
 import { LightningElement,api} from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import AccountDetailModal from 'c/accountDetailModal';
+import TitleLabel from '@salesforce/label/c.AccountDetailTable_Title'
 export default class AccountDetailTable extends NavigationMixin(LightningElement){
+    label=TitleLabel
     @api totalOpportunities = ''; 
     showModal = true;
     viewOpportunity(event){
-        console.log('viewOp is activated');
-        console.log(event.target.dataset.id);
         this[NavigationMixin.Navigate]({
             type: 'standard__recordPage',
             attributes: {

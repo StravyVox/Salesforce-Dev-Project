@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>57.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property default="HEADER" name="header" label="Header content" type="String" required="true"/>
+            <property default="Topic" name="topic" label="Topic content" type="String" required="true"/>
+            <property default="slds-text-heading_large slds-text-align_center" name="headerCssClass" label="Header css class" type="String" required="true"/>
+            <property default="slds-text-body_regular slds-text-align_center slds-text-color_weak" name="topicCssClass" label="Topic css class" type="String" required="true"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

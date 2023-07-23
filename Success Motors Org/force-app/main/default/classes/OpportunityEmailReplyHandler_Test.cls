@@ -16,7 +16,8 @@ public class OpportunityEmailReplyHandler_Test {
             StageName='Prospecting',
             CloseDate=Date.today().addDays(3),
             AccountId=testAcc.Id,
-            ContactId=testCon.Id
+            ContactId=testCon.Id,
+            Invoice_Number__c = 'INV-000115'
             );
         insert testOpportunity;
     }

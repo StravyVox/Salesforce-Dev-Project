@@ -3,32 +3,28 @@ import LightningModal from 'lightning/modal';
 import createDocument from '@salesforce/apex/OpportunityPDFController.createDocument';
 import { CloseActionScreenEvent } from 'lightning/actions';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import TitleLabel from '@salesforce/label/c.GenerateInvoice_Title'
 export default class generateInvoice extends LightningModal {
-
+    label = TitleLabel;
     @api content;
     @api loaded = false;
-    @track linkPDF = '/apex/OpportunityPDF?id='+this._recordId;
-
-
+    @track linkPDF = '/apex/SMotors__OpportunityPDF?id='+this._recordId;
     @track _recordId;
-
     @api set recordId(value) {
         this._recordId = value;
-        this.linkPDF = '/apex/OpportunityPDF?id='+this._recordId;
+        this.linkPDF = '/apex/SMotors__OpportunityPDF?id='+this._recordId;
         this.loaded = true;
     }
-
     get recordId() {
         return this._recordId;
     }
+
     closeAction() {
-        
         this.dispatchEvent(new CloseActionScreenEvent());
     }
     generateInvoice(){
         createDocument({OpportunityID: this.recordId}).then(
             result=>{
-                console.log(result);
                 this.closeAction();
                 this.sendMessage(result);
             }
@@ -41,9 +37,6 @@ export default class generateInvoice extends LightningModal {
     }
 
     sendMessage(result){
-        
-        console.log('SendMessage done');
-        console.log('Result is ' + result);
         switch(result){
             case 1:
                 var eventMessage = new ShowToastEvent({

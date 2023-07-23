@@ -14,7 +14,7 @@ public with sharing class OpportunityEmailController {
     @AuraEnabled
     public static String returnTemplateSubject(String OpportunityID, String TemplateName){
         try{
-           EmailTemplate template = [SELECT Subject FROM EmailTemplate WHERE DeveloperName = :TemplateName LIMIT 1];
+           EmailTemplate template = [SELECT Subject FROM EmailTemplate WHERE Name = :TemplateName LIMIT 1];
            Opportunity op = [SELECT Invoice_Number__c from Opportunity Where Id =:OpportunityID LIMIT 1];
            return template.Subject + ' ' + op.Invoice_Number__c;
         }
@@ -25,14 +25,17 @@ public with sharing class OpportunityEmailController {
     @AuraEnabled
     public static String returnTemplateBody(String OpportunityID,String TemplateName){
         try{
-            EmailTemplate template = [SELECT htmlvalue FROM EmailTemplate WHERE DeveloperName = :TemplateName LIMIT 1];
+            EmailTemplate template = [SELECT htmlvalue FROM EmailTemplate WHERE Name = :TemplateName LIMIT 1];
             Opportunity op = [SELECT Invoice_Number__c from Opportunity Where Id =:OpportunityID LIMIT 1];
-            Pattern regExpPattern = Pattern.compile('body=approved');
+            Pattern regExpPattern = Pattern.compile('mailto:');
             Matcher regExpMatcher = regExpPattern.matcher(template.htmlvalue);
             if(regExpMatcher.find()){
-                System.debug('string has matches');
+                
+                List<EmailServicesFunction> idOfService = [SELECT Id, attachmentOption FROM EmailServicesFunction WHERE FunctionName = 'OpportunityAnswerService' ];
+                EmailServicesAddress adress=  [SELECT Id, LocalPart, EmailDomainName FROM EmailServicesAddress WHERE FunctionId = :idOfService[0].Id LIMIT 1];
                 Integer position = regExpMatcher.end();
-                template.HtmlValue = template.HtmlValue.substring(0, position) +'&subject=' + op.Invoice_Number__c + template.HtmlValue.substring(position);
+                template.HtmlValue = template.HtmlValue.substring(0, position) + adress.LocalPart + '@'+adress.EmailDomainName
+                +'?body=approved&subject='+op.Invoice_Number__c + template.HtmlValue.substring(position);
                 return template.htmlvalue;
             }
             return template.htmlvalue;

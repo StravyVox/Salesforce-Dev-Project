@@ -1,0 +1,26 @@
+<template>
+
+    <div class="slds-var-p-around_medium slds-text-align_right">
+        <lightning-button 
+        icon-name="utility:download" 
+        label="Download csv file" 
+        title="Download CSV File"                    
+        onclick={downloadData}
+        variant="brand"></lightning-button>
+        </div>
+    <lightning-card>
+    <lightning-datatable
+            key-field="CreatedDate"
+            columns={columns}
+            data={displayedData}
+            sorted-by={sortedBy}
+            sorted-direction={sortDirection}
+            onsort={updateColumnSorting}
+            default-sort-direction={defaultSortDirection}
+            onheaderaction={handleHeaderAction}
+            hide-checkbox-column
+            >
+    </lightning-datatable>
+    <c-datatable-paginator size-of-page={pageSize} main-data={data} onpage={updateDisplayedData}></c-datatable-paginator>
+    </lightning-card>
+</template>

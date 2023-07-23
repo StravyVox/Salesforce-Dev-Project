@@ -1,5 +1,6 @@
 global class BatchScheduler implements Schedulable {
     public Database.Batchable<sObject> BatchObject;
+    
     public Boolean setBatchObject(string nameOfBatchClass){
         Type batchClassType = Type.forName(nameOfBatchClass);
         try{

@@ -16,7 +16,8 @@ public class OpportunityEmailController_Test {
             StageName='Prospecting',
             CloseDate=Date.today().addDays(3),
             AccountId=testAcc.Id,
-            ContactId=testCon.Id
+            ContactId=testCon.Id, 
+            Invoice_Number__c = 'INV-000115'
             );
         insert testOpportunity;
         Profile p = [SELECT Id FROM Profile WHERE Name='System Administrator'];
@@ -31,7 +32,7 @@ public class OpportunityEmailController_Test {
                 Name='TestTemp',
                 DeveloperName='TestUniqueName',
                 Body='TestBody',
-                htmlvalue='TestBody?body=approved',
+                htmlvalue='TestBody?body=approvedmailto:',
                 Subject='TestSubject',
                 TemplateType='custom',
                 FolderId='0052w00000FSPQXAA5'
@@ -53,16 +54,16 @@ public class OpportunityEmailController_Test {
         Opportunity op = [SELECT Id, Name,Invoice_Number__c From Opportunity Where StageName='Prospecting' LIMIT 1];
         String expected = 'TestSubject'+' '+op.Invoice_Number__c;
         Test.startTest();
-            String resultstring = OpportunityEmailController.returnTemplateSubject(op.Id, 'TestUniqueName');
+            String resultstring = OpportunityEmailController.returnTemplateSubject(op.Id, 'TestTemp');
         Test.stopTest();
         Assert.areEqual(expected, resultstring);
     }
     @IsTest
     static void testReturnTemplateBody() {
         Opportunity op = [SELECT Id, Name,Invoice_Number__c From Opportunity Where StageName='Prospecting' LIMIT 1];
-        String expected = 'TestBody?body=approved&subject=INV-';
+        String expected = 'body=approved&subject=';
         Test.startTest();
-          String result = OpportunityEmailController.returnTemplateBody(op.Id,'TestUniqueName');
+          String result = OpportunityEmailController.returnTemplateBody(op.Id,'TestTemp');
           System.debug(result);
         Test.stopTest();
         System.assert(result.contains(expected));

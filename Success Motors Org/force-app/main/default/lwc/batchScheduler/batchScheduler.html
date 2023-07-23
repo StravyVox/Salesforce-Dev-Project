@@ -1,24 +1,28 @@
 <template>
-    <lightning-card title="Batch Scheduler">
-        <template if:false={BatchSet} > 
-            <lightning-input class="slds-p-around_small" onchange={changeBatchValue} label="Input Batch Class Name to schedule" placeholder={BatchName}></lightning-input>
-            <lightning-input class="slds-p-around_small" onchange={changeJobValue} label="Input Job Name to check" placeholder={JobName}></lightning-input>
-            <lightning-button variant ="brand" class="slds-p-around_small" title="ApproveBatch" label="ApproveBatch" onclick={addBatchName}></lightning-button>
-        </template>
-        <template if:true={BatchSet}>
-            <p class="slds-p-around_small">
+    <lightning-card>
+            <h1 slot="title">{label}</h1>
+            <p class="slds-p-horizontal_small">
                 Please enter a CRON 
                 <lightning-helptext icon-variant="warning" content="A cron expression is a string consisting of six or seven subexpressions (fields) that describe individual details of the schedule"></lightning-helptext>
                  expression
             </p>
-            <lightning-input class="slds-p-around_small" label="CRON String" onchange={changeCRONValue}></lightning-input>
-            <lightning-button variant ="brand" class="slds-p-horizontal_small" label="Run Once" title="Run Once" onclick={runOnce}></lightning-button>
-            <template if:false={JobSet}>
-                <lightning-button variant ="brand" label="Schedule job" title="Schedule Job" onclick={scheduleJob}></lightning-button>
-            </template>
-            <template if:true={JobSet}>
-                <lightning-button variant ="destructive" label="Abort job" title="Abort Job" onclick={abortJob}></lightning-button>
-            </template>
-        </template>
+            <lightning-input disabled={disabledInput} class="slds-p-horizontal_small" label="CRON String" onchange={changeCRONValue}></lightning-input>
+            <lightning-formatted-url class="slds-p-horizontal_small" value="https://help.salesforce.com/s/articleView?id=sf.reports_subscription_reporting_cron.htm" label="Read more about scheduling" ></lightning-formatted-url>
+            <lightning-layout horizontal-align="end">
+                <lightning-layout-item flexibility="auto" padding="around-small" alignmentbump="left">
+                    <lightning-button variant ="brand" label="Run Once" title="Run Once" onclick={runOnce}></lightning-button>
+                </lightning-layout-item>
+                <template if:false={JobSet}>
+                    <lightning-layout-item flexibility="auto" padding="around-small">
+                        <lightning-button variant ="brand" label="Schedule job" title="Schedule Job" onclick={scheduleJob}></lightning-button>
+                    </lightning-layout-item>
+                </template>
+                <template if:true={JobSet}>
+                    <lightning-layout-item flexibility="auto" padding="around-small">
+                        <lightning-button variant ="destructive" label="Abort job" title="Abort Job" onclick={abortJob}></lightning-button>
+                    </lightning-layout-item>
+                </template>
+
+            </lightning-layout>
     </lightning-card>
 </template>

@@ -15,14 +15,30 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="37b6cdc0-e8ba-4eed-abce-aa0cc7d7bb29" >
 		<http:listener-connection host="0.0.0.0" port="8081" />
 	</http:listener-config>
+	<salesforce:sfdc-config name="Salesforce_ConfigCleanOrg" doc:name="Salesforce Config" doc:id="df636ef4-0240-4655-8d98-7605e20f7c2b" >
+		<salesforce:basic-connection username="daniil.davidoskiy@developer.new.smotors.com" password="918273645Sv" securityToken="4xYsimePOGi17gcU9tnaV9bAB" />
+	</salesforce:sfdc-config>
 	<flow name="muleappFlow" doc:id="c792a6dd-fe90-4b5f-ae15-6e6aea303efe" >
 		<http:listener doc:name="Listener" doc:id="5fcd00a9-f54e-48bc-b744-4b50a7c70414" config-ref="HTTP_Listener_config" path="/startTransfer"/>
 		<salesforce:query doc:name="Query" doc:id="7481e42d-d171-42d8-943c-90d47d021981" config-ref="Salesforce_Config">
 			<salesforce:salesforce-query><![CDATA[SELECT 	Name, OpportunityName__c,Amount__c, FirstName__c,LastName__c FROM Payment__c]]></salesforce:salesforce-query>
 		</salesforce:query>
-		<logger level="INFO" doc:name="Logger" doc:id="48ea0018-3c63-44e1-b464-42511460bac6" message="HelloWorld"/>
 		<logger level="INFO" doc:name="Logger" doc:id="d5b0b7b9-f40c-4d2a-9612-1b1a28766ebd" message="#[output application/java&#10;---&#10;payload]"/>
-		<salesforce:upsert objectType="Payment__c" doc:name="Upsert" doc:id="e4a4413a-673a-4480-a4bc-e7828313bd39" config-ref="Salesforce_ConfigMainOrg" externalIdFieldName="Name"/>
+		<ee:transform doc:name="Transform Message" doc:id="d7ffef51-360f-4bc1-9691-ed415f5f0920" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	Name: payload01.Name,
+	SMotors__Amount__c: payload01.Amount__c,
+	SMotors__FirstName__c: payload01.FirstName__c,
+	SMotors__LastName__c: payload01.LastName__c,
+	SMotors__OpportunityName__c: payload01.OpportunityName__c
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:upsert objectType="SMotors__Payment__c" doc:name="Upsert" doc:id="e4a4413a-673a-4480-a4bc-e7828313bd39" config-ref="Salesforce_ConfigCleanOrg" externalIdFieldName="Name"/>
 		<logger level="INFO" doc:name="Logger" doc:id="91950285-e489-4b2e-a6a2-f80a360c6fba" message="#[output application/java&#10;---&#10;payload]"/>
 	</flow>
 </mule>

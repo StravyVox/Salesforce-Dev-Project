@@ -3,6 +3,13 @@
     <apiVersion>56.0</apiVersion>
     <isExposed>true</isExposed>
     <targets>
-        <target>lightning__Tab</target>
+        <target>lightning__HomePage</target>
+
     </targets>
+     <targetConfigs>
+        <targetConfig targets="lightning__HomePage">
+            <property default="BirthdayMassEmailSender" name="BatchClassName" label="Batch Class Name" type="String" required="false"/>
+            <property default="batchSchedulerLWCJob" name="JobName" label="Scheduler Class Name" type="String" required="true"/>
+        </targetConfig>
+    </targetConfigs>
 </LightningComponentBundle>

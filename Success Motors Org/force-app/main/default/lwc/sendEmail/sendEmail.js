@@ -32,7 +32,7 @@ export default class SendEmail extends NavigationMixin(LightningModal) {
                 this.closeAction(-1);
             }
         );
-        returnTemplateSubject({OpportunityID: value, TemplateName: "Opportunity_Bill_1678894162036"}).then(
+        returnTemplateSubject({OpportunityID: value, TemplateName: "Opportunity Bill"}).then(
             result=>{ 
                 console.log('Template subject is '+result);
                 this.subject = result;
@@ -42,7 +42,7 @@ export default class SendEmail extends NavigationMixin(LightningModal) {
                 this.closeAction(-1);
             }
         );
-        returnTemplateBody({OpportunityID: value,TemplateName: "Opportunity_Bill_1678894162036"}).then(
+        returnTemplateBody({OpportunityID: value,TemplateName: "Opportunity Bill"}).then(
             result=>{
                 console.log('Template body is '+result);
                 

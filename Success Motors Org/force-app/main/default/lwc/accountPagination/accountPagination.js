@@ -1,13 +1,10 @@
 import { LightningElement, api } from 'lwc';
 
 export default class accountPagination extends LightningElement {
+    @api recordSize = 10;
     currentPage =1;
     totalRecords;
-    @api recordSize = 10;
     totalPage = 0;
-    get records(){
-        return this.visibleRecords;
-    }
     @api 
     set records(data){
         if(data){ 
@@ -17,11 +14,13 @@ export default class accountPagination extends LightningElement {
             this.totalRecords = data;
             this.recordSize = Number(this.recordSize);
             this.totalPage = Math.ceil(data.length/this.recordSize);
-
+            
             this.updateRecords();
         }
     }
-
+    get records(){
+        return this.visibleRecords;
+    }
     get disablePrevious(){ 
         return this.currentPage<=1;
     }
@@ -41,10 +40,6 @@ export default class accountPagination extends LightningElement {
         }
     }
     updateRecords(){ 
-        console.log('Update Records activated')
-        console.log(this.currentPage);
-        console.log(this.totalRecords);
-        
         const start = (this.currentPage-1)*this.recordSize;
         const end = this.recordSize*this.currentPage;
         

@@ -1,6 +1,7 @@
 public with sharing class BirthdayMassEmailSender implements Database.Batchable<sObject>,Database.Stateful{
     private EmailTemplate template;
     private List<ID> idListOfContacts;
+    
     public BirthdayMassEmailSender() {
         this.template = [SELECT ID, NAME FROM EMAILTEMPLATE WHERE NAME = 'Happy Birthday Discount' LIMIT 1];
         this.idListOfContacts = new List<ID>();
