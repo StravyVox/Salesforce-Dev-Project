@@ -6,18 +6,6 @@
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
-	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="fd60e678-5ac1-461c-b4fb-cf9dc81e1eb9" >
-		<salesforce:basic-connection username="daniil.davidoskiy@developer.junctionsmotors.com" password="918273645Sv" securityToken="phKuw8OvvDsZeD3f1zxU9Z0X" />
-	</salesforce:sfdc-config>
-	<salesforce:sfdc-config name="Salesforce_ConfigMainOrg" doc:name="Salesforce Config" doc:id="44cd8b3a-882f-453a-8ac4-3b2bacb3bef9" >
-		<salesforce:basic-connection username="daniil.davidoskiy@developer.smotors.com" password="918273645Sm" securityToken="7GSEZedn3LHveqj3NkekOwHF" />
-	</salesforce:sfdc-config>
-	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="37b6cdc0-e8ba-4eed-abce-aa0cc7d7bb29" >
-		<http:listener-connection host="0.0.0.0" port="8081" />
-	</http:listener-config>
-	<salesforce:sfdc-config name="Salesforce_ConfigCleanOrg" doc:name="Salesforce Config" doc:id="df636ef4-0240-4655-8d98-7605e20f7c2b" >
-		<salesforce:basic-connection username="daniil.davidoskiy@developer.new.smotors.com" password="918273645Sv" securityToken="4xYsimePOGi17gcU9tnaV9bAB" />
-	</salesforce:sfdc-config>
 	<flow name="muleappFlow" doc:id="c792a6dd-fe90-4b5f-ae15-6e6aea303efe" >
 		<http:listener doc:name="Listener" doc:id="5fcd00a9-f54e-48bc-b744-4b50a7c70414" config-ref="HTTP_Listener_config" path="/startTransfer"/>
 		<salesforce:query doc:name="Query" doc:id="7481e42d-d171-42d8-943c-90d47d021981" config-ref="Salesforce_Config">
