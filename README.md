@@ -4,7 +4,8 @@ SMotors is an application for a store, that helps to get in touch with clients.
 <div>
   <h2>Logo of the company</h2>
   
- <img src=https://github.com/StravyVox/Salesforce-Dev-Project/assets/79334343/410a63fd-caf1-46f6-87ae-e2e37f011b4d width=200 height=200></img>
+  ![Info](https://github.com/StravyVox/Salesforce-Dev-Project/assets/79334343/b305ea90-c038-461c-b3bd-0a1366a22168)
+  
 </div>
 
 <div>
